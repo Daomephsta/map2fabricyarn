@@ -1,0 +1,7 @@
+base map2fabricyarn
+author Daomephsta
+email leviathan14320@gmail.com
+date 2021-01-28
+name Map To Fabric Yarn
+desc Syntax plugin to map code from intermediary to Yarn
+url https://github.com/Daomephsta/map2fabricyarn
