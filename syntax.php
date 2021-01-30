@@ -68,10 +68,11 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
         if ($state == DOKU_LEXER_MATCHED)
         {
             self::loadMappings();
-            $result = preg_replace_callback(
+            $mapped = preg_replace_callback(
                 '/(net\.minecraft\.class|class|method|field)_\d+/', 
                 array($this, 'map'), $match);
-            return array($result);
+            $rendered = $this->render_text($mapped);
+            return array($rendered);
         }
         return array();
     }
@@ -113,7 +114,7 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
     
     function getAllowedTypes()
     {
-        return array('protected');
+        return array();
     }
     
     function getPType()
@@ -123,6 +124,6 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
     
     function getSort()
     {
-        return 199;
+        return 999;
     }
 }
