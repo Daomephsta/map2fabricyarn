@@ -1,5 +1,5 @@
 <?php
-class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin 
+class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin 
 {   
     private static $classes = array(),
                    $methods = array(),
@@ -35,48 +35,28 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
         }
     }
     
-    static function simpleName($internalName)
+    function register(Doku_Event_Handler $controller)
     {
-        // Split on /.$ and return last element
-        return end(preg_split('/[\/\.$]/', $internalName));
+        $controller->register_hook('PARSER_WIKITEXT_PREPROCESS', 'AFTER', 
+            $this, 'remapWikiText');
     }
     
-    static function sourceName($internalName)
+    public function remapWikiText(Doku_Event $event)
     {
-        return str_replace('/', '.', $internalName);
+        self::loadMappings();
+        $event->data = preg_replace_callback(
+            '/<map_to_yarn>(\X*?)<\/map_to_yarn>/', 
+            array($this, 'map_zone'), $event->data);
     }
     
-    // PHP 7
-    static function startsWith($search, $start)
+    function map_zone($groups)
     {
-        return substr($search, 0, strlen($start)) === $start;
-    }
-
-    function connectTo($mode)
-    {
-        $this->Lexer->addEntryPattern('<map_to_yarn>(?=.*?</map_to_yarn>)', $mode, 'plugin_map2fabricyarn');
+        return preg_replace_callback(
+            '/(net\.minecraft\.class|class|method|field)_\d+/', 
+            array($this, 'map_intermediary'), $groups[1]);
     }
     
-    function postConnect() 
-    { 
-        $this->Lexer->addExitPattern('</map_to_yarn>', 'plugin_map2fabricyarn'); 
-    }
-    
-    function handle($match, $state, $pos, Doku_Handler $handler)
-    {
-        if ($state == DOKU_LEXER_UNMATCHED)
-        {
-            self::loadMappings();
-            $mapped = preg_replace_callback(
-                '/(net\.minecraft\.class|class|method|field)_\d+/', 
-                array($this, 'map'), $match);
-            $rendered = $this->render_text($mapped);
-            return array($rendered);
-        }
-        return array();
-    }
-    
-    function map($groups)
+    function map_intermediary($groups)
     {
         $match = &$groups[0];
         switch ($groups[1])
@@ -96,33 +76,20 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
         }
     }
     
-    function render($mode, Doku_Renderer $renderer, $data)
+    static function simpleName($internalName)
     {
-        if ($mode == 'xhtml')
-        {
-            $renderer->doc .= $data[0];
-            return true;
-        }
-        return false;
+        // Split on /.$ and return last element
+        return end(preg_split('/[\/\.$]/', $internalName));
     }
     
-    function getType()
+    static function sourceName($internalName)
     {
-        return 'container';
+        return str_replace('/', '.', $internalName);
     }
     
-    function getAllowedTypes()
+    // PHP 7
+    static function startsWith($search, $start)
     {
-        return array();
-    }
-    
-    function getPType()
-    {
-        return 'normal';
-    }
-    
-    function getSort()
-    {
-        return 999;
+        return substr($search, 0, strlen($start)) === $start;
     }
 }
