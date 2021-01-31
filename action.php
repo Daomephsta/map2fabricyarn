@@ -50,6 +50,8 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
     {
         $controller->register_hook('PARSER_WIKITEXT_PREPROCESS', 'AFTER', 
             $this, 'remapWikiText');
+        $controller->register_hook('PARSER_CACHE_USE', 'BEFORE', 
+            $this, 'addCacheDependencies');
     }
     
     public function remapWikiText(Doku_Event $event)
@@ -57,6 +59,8 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
         self::loadMappings();
         $event->data = preg_replace_callback(self::REMAP_ZONE_PATTERN, 
             array($this, 'map_zone'), $event->data);
+        // Marker to trigger metadata addition
+        $event->data .= '~~MAP2FABRICYARN~~';
     }
     
     function map_zone($groups)
@@ -82,6 +86,16 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
                 return self::$methods[$name] ?: $name;
             case 'field':
                 return self::$fields[$name] ?: $name;
+        }
+    }
+    
+    public function addCacheDependencies(Doku_Event $event)
+    {
+        if(p_get_metadata($event->data->page, 
+            'plugin map2fabricyarn')['used'])
+        {
+            array_push($event->data->depends['files'], 
+                self::MAPPINGS_FILE);
         }
     }
 
