@@ -118,7 +118,7 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
     
     function getPType()
     {
-        return 'block';
+        return 'normal';
     }
     
     function getSort()
