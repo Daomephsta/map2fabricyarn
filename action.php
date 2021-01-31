@@ -1,34 +1,45 @@
 <?php
 class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin 
 {   
+    const MAPPINGS_FILE = DOKU_INC.'data/map2fabricyarn/mappings.tiny';
+    //PHP regex engine caches regexes for us
+    const REMAP_ZONE_PATTERN = '/<map_to_yarn>(\X*?)<\/map_to_yarn>/';
+    const INTERMEDIARY_NAME_PATTERN = 
+        '/(net\.minecraft\.class|class|method|field)_\d+/';
     private static $classes = array(),
                    $methods = array(),
                    $fields = array();
 
     static function loadMappings()
     {
-        $mappings = fopen(DOKU_INC.'data/map2fabricyarn/mappings.tiny',  'r');
+        $mappings = fopen(self::MAPPINGS_FILE, 'r');
         if ($mappings)
         {
             while (($line = fgets($mappings)) !== false)
             {
-                $line = rtrim($line);
+                $line = trim($line);
                 $tokens = explode("\t", $line);
-                if ($tokens[0] === 'c' and 
-                    self::startsWith($tokens[1], 'net/minecraft/class'))
+                $mappingType = $tokens[0];
+                if ($mappingType == 'c')
                 {
-                    self::$classes[self::simpleName($tokens[1])] = 
-                        self::sourceName($tokens[2]);
+                    [ , $intermediary, $yarn] = $tokens;
+                    if (self::startsWith($intermediary, 'net/minecraft/class'))
+                    {
+                        self::$classes[self::simpleName($intermediary)] = 
+                            self::sourceName($yarn);
+                    }
                 }
-                else if ($tokens[1] === 'm' and 
-                    self::startsWith($tokens[3], 'method'))
+                else if ($mappingType == 'm')
                 {
-                    self::$methods[$tokens[3]] = $tokens[4];
+                    [ , , $intermediary, $yarn] = $tokens;
+                    if (self::startsWith($intermediary, 'method'))
+                        self::$methods[$intermediary] = $yarn;
                 }
-                else if ($tokens[1] === 'f' and 
-                    self::startsWith($tokens[3], 'field'))
+                else if ($mappingType == 'f')
                 {
-                    self::$fields[$tokens[3]] = $tokens[4];
+                    [ , , $intermediary, $yarn] = $tokens;
+                    if (self::startsWith($intermediary, 'field'))
+                        self::$fields[$intermediary] = $yarn;
                 }
             }
             fclose($mappings);
@@ -44,38 +55,36 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
     public function remapWikiText(Doku_Event $event)
     {
         self::loadMappings();
-        $event->data = preg_replace_callback(
-            '/<map_to_yarn>(\X*?)<\/map_to_yarn>/', 
+        $event->data = preg_replace_callback(self::REMAP_ZONE_PATTERN, 
             array($this, 'map_zone'), $event->data);
     }
     
     function map_zone($groups)
     {
-        return preg_replace_callback(
-            '/(net\.minecraft\.class|class|method|field)_\d+/', 
+        return preg_replace_callback(self::INTERMEDIARY_NAME_PATTERN, 
             array($this, 'map_intermediary'), $groups[1]);
     }
     
     function map_intermediary($groups)
     {
-        $match = &$groups[0];
-        switch ($groups[1])
+        [$name, $type] = $groups;
+        switch ($type)
         {
             // Fully qualified intermediary class names are replaced 
             // with fully qualified yarn class names
             case 'net.minecraft.class':
-                return self::$classes[simpleName($match)] ?: $match;
+                return self::$classes[simpleName($name)] ?: $name;
             // Simple intermediary class names are replaced with 
             // simple yarn class names. 
             case 'class': 
-                return self::simpleName(self::$classes[$match]) ?: $match;
+                return self::simpleName(self::$classes[$name]) ?: $name;
             case 'method':
-                return self::$methods[$match] ?: $match;
+                return self::$methods[$name] ?: $name;
             case 'field':
-                return self::$fields[$match] ?: $match;
+                return self::$fields[$name] ?: $name;
         }
     }
-    
+
     static function simpleName($internalName)
     {
         // Split on /.$ and return last element
