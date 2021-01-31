@@ -54,8 +54,7 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
 
     function connectTo($mode)
     {
-        $this->Lexer->addEntryPattern('<map_to_yarn>(?=.*</map_to_yarn>)', $mode, 'plugin_map2fabricyarn');
-        $this->Lexer->addPattern('.*(?=</map_to_yarn>)', 'plugin_map2fabricyarn');
+        $this->Lexer->addEntryPattern('<map_to_yarn>(?=.*?</map_to_yarn>)', $mode, 'plugin_map2fabricyarn');
     }
     
     function postConnect() 
@@ -65,7 +64,7 @@ class syntax_plugin_map2fabricyarn extends DokuWiki_Syntax_Plugin
     
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
-        if ($state == DOKU_LEXER_MATCHED)
+        if ($state == DOKU_LEXER_UNMATCHED)
         {
             self::loadMappings();
             $mapped = preg_replace_callback(
