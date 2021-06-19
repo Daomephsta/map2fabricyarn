@@ -57,10 +57,12 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
     public function remapWikiText(Doku_Event $event)
     {
         self::loadMappings();
+        $replacements = 0;
         $event->data = preg_replace_callback(self::REMAP_ZONE_PATTERN, 
-            array($this, 'map_zone'), $event->data);
+            array($this, 'map_zone'), $event->data, -1, $replacements);
         // Marker to trigger metadata addition
-        $event->data .= '~~MAP2FABRICYARN~~';
+        if ($replacements > 0)
+            $event->data .= '~~MAP2FABRICYARN~~';
     }
     
     function map_zone($groups)
