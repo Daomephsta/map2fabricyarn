@@ -1,25 +1,25 @@
 <?php
 require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
 
-// Variant of <code> that remaps Intermediary to Yarn 
-class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin 
+// Variant of <file> that remaps Intermediary to Yarn 
+class syntax_plugin_map2fabricyarn_yarnfile extends DokuWiki_Syntax_Plugin 
 {   
-    const YARNCODE_ARGS = '/<yarncode(?:\s+(\w+))?(?:\s+([\w.]+))?>((?:.|\n)+)/';
+    const YARNFILE_ARGS = '/<yarnfile(?:\s+(\w+))?(?:\s+([\w.]+))?>((?:.|\n)+)/';
     const INTERMEDIARY = '/(net\.minecraft\.class|class|method|field)_\d{4,5}/';
 
     function connectTo($mode)
     {
-        $this->Lexer->addEntryPattern('<yarncode\b.*?>.*?(?=</yarncode>)', 
-            $mode, 'plugin_map2fabricyarn_yarncode');
-        $this->Lexer->addExitPattern('</yarncode>', 
-            'plugin_map2fabricyarn_yarncode');
+        $this->Lexer->addEntryPattern('<yarnfile\b.*?>.*?(?=</yarnfile>)', 
+            $mode, 'plugin_map2fabricyarn_yarnfile');
+        $this->Lexer->addExitPattern('</yarnfile>', 
+            'plugin_map2fabricyarn_yarnfile');
     }
 
     function handle($match, $state, $pos, Doku_Handler $handler)
     {
         if ($state == DOKU_LEXER_ENTER)
         {
-            if (!preg_match(self::YARNCODE_ARGS, $match, $matches))
+            if (!preg_match(self::YARNFILE_ARGS, $match, $matches))
                 return [false];
             $matches[3] = preg_replace_callback(self::INTERMEDIARY, 
                 function ($groups)
