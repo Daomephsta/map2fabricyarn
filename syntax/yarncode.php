@@ -5,7 +5,6 @@ require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
 class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin 
 {   
     const YARNCODE_ARGS = '/<yarncode(?:\s+(\w+))?(?:\s+([\w.]+))?>((?:.|\n)+)/';
-    const INTERMEDIARY = '/(net\.minecraft\.class|class|method|field)_\d{4,5}/';
 
     function connectTo($mode)
     {
@@ -21,12 +20,7 @@ class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin
         {
             if (!preg_match(self::YARNCODE_ARGS, $match, $matches))
                 return [false];
-            $matches[3] = preg_replace_callback(self::INTERMEDIARY, 
-                function ($groups)
-                {
-                    return Mappings::map_intermediary($groups[0], $groups[1]);
-                }, 
-                $matches[3]);
+            $matches[3] = Mappings::map_all_intermediary($matches[3]);
             return [true, $matches];
         }
         return [false];

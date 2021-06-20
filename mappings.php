@@ -3,9 +3,20 @@
 class Mappings
 {
     const FILE = DOKU_INC.'data/map2fabricyarn/mappings.tiny';
+    const INTERMEDIARY = '/(net\.minecraft\.class|class|method|field)_\d+/';
     private static $classes = array(),
                    $methods = array(),
                    $fields = array();
+
+    static function map_all_intermediary($text)
+    {
+        return preg_replace_callback(Mappings::INTERMEDIARY, 
+            function ($groups)
+            {
+                return Mappings::map_intermediary($groups[0], $groups[1]);
+            }, 
+            $text);
+    }
 
     static function map_intermediary($name, $type)
     {
