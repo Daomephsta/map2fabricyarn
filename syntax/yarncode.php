@@ -137,3 +137,4 @@ class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin
         return substr($search, 0, strlen($start)) === $start;
     }
 }
+?>

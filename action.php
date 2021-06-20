@@ -19,3 +19,4 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
         }
     }
 }
+?>
