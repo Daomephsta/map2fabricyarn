@@ -4,7 +4,8 @@ require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
 // Variant of <file> that remaps Intermediary to Yarn 
 class syntax_plugin_map2fabricyarn_yarnfile extends DokuWiki_Syntax_Plugin 
 {   
-    const YARNFILE_ARGS = '/<yarnfile(?:\s+(\w+))?(?:\s+([\w.]+))?>((?:.|\n)+)/';
+    const YARNFILE_ARGS = 
+        '/<yarnfile(?:\s+(-|\w+))?(?:\s+([\w.]+))?>((?:.|\n)+)/';
 
     function connectTo($mode)
     {
