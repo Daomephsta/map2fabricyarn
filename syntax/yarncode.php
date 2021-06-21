@@ -1,5 +1,6 @@
 <?php
 require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
+require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\dokusyntax.php');
 
 // Variant of <code> that remaps Intermediary to Yarn 
 class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin 
