@@ -5,7 +5,7 @@ require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
 class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin 
 {   
     const YARNCODE_ARGS = 
-        '/<yarncode(?:\s+(-|\w+))?(?:\s+([\w.]+))?>((?:.|\n)+)/';
+        '/<yarncode(?:\s+(\w+))?(?:\s+([\w.]+))?(?:\s+\[(.+)\])?>((?:.|\n)+)/';
 
     function connectTo($mode)
     {
@@ -21,7 +21,8 @@ class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin
         {
             if (!preg_match(self::YARNCODE_ARGS, $match, $matches))
                 return [false];
-            $matches[3] = Mappings::map_all_intermediary($matches[3]);
+                $matches[3] = DokuSyntax::decode_options($matches[3]);
+            $matches[4] = Mappings::map_all_intermediary($matches[4]);
             return [true, $matches];
         }
         return [false];
@@ -31,8 +32,8 @@ class syntax_plugin_map2fabricyarn_yarncode extends DokuWiki_Syntax_Plugin
     {
         if ($format == 'xhtml' and $data[0])
         {
-            [$_, $language, $file, $code] = $data[1];
-            $renderer->code($code, $language, $file);
+            [$_, $language, $file, $options, $code] = $data[1];
+            $renderer->code($code, $language, $file, $options);
             return true;
         }
         else if ($format == 'metadata')
