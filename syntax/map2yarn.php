@@ -16,7 +16,8 @@ class syntax_plugin_map2fabricyarn_map2yarn extends DokuWiki_Syntax_Plugin
         {
             $code = substr($match, strlen('<yarn '), 
                 strlen($match) - strlen('<yarn ') - 1);
-            return [Mappings::map_all_intermediary($code)];
+            // Escapes HTML special characters for security
+            return [Mappings::map_all_intermediary(hsc($code))];
         }
         return [];
     }
