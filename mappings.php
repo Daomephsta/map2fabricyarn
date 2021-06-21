@@ -26,7 +26,7 @@ class Mappings
             // Fully qualified intermediary class names are replaced 
             // with fully qualified yarn class names
             case 'net.minecraft.class':
-                return self::$classes[simpleName($name)] ?: $name;
+                return self::$classes[self::simpleName($name)] ?: $name;
             // Simple intermediary class names are replaced with 
             // simple yarn class names. 
             case 'class': 
