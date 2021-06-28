@@ -1,8 +1,8 @@
 <?php
+require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
+
 class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin 
 {   
-    const MAPPINGS_FILE = DOKU_INC.'data/map2fabricyarn/mappings.tiny';
-    
     function register(Doku_Event_Handler $controller)
     {
         $controller->register_hook('PARSER_CACHE_USE', 'BEFORE', 
@@ -15,7 +15,7 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
             'plugin map2fabricyarn')['used'])
         {
             array_push($event->data->depends['files'], 
-                self::MAPPINGS_FILE);
+                Mappings::FILE);
         }
     }
 }
