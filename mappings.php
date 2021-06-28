@@ -1,12 +1,11 @@
 <?php
-
 class Mappings
 {
     const FILE = DOKU_INC.'data/map2fabricyarn/mappings.tiny';
     const INTERMEDIARY = '/(net\.minecraft\.class|class|method|field)_\d+/';
-    private static $classes = array(),
-                   $methods = array(),
-                   $fields = array();
+    private static $classes,
+                   $methods,
+                   $fields;
 
     static function map_all_intermediary($text)
     {
@@ -42,6 +41,10 @@ class Mappings
     {
         if (self::$classes or self::$methods or self::$fields)
             return;
+        // Clear existing or initialise
+        $classes = array();
+        $methods = array();
+        $fields = array();
         $mappings = fopen(self::FILE, 'r');
         if ($mappings)
         {
@@ -75,7 +78,7 @@ class Mappings
             fclose($mappings);
         }
     }
-                
+    
     static function simpleName($internalName)
     {
         // Split on /.$ and return last element
