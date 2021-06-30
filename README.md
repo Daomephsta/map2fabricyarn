@@ -12,6 +12,9 @@ In other situations, use the `<yarn>` tag. The content to remap should be inside
 Example: `<yarn class_2960>` results in the text Identifier at the time of writing. 
 This tag can have [formatting](https://www.dokuwiki.org/wiki:syntax#basic_text_formatting) by the standard tags.
 
+## Fully Qualified Class Names
+To output a fully qualified yarn class name, input a fully qualified intermediary name by prefixing it with `net.minecraft.`
+
 ## Mapping File
 Mappings are loaded from `data\map2fabricyarn\mappings.tiny`. You must create and update this file yourself. 
 Pages using map2fabricyarn will automatically rebuild when the mappings file is updated.
