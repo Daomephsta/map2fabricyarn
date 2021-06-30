@@ -1,5 +1,5 @@
 <?php
-require_once(DOKU_INC.'\lib\plugins\map2fabricyarn\mappings.php');
+require_once(DOKU_INC.'/lib/plugins/map2fabricyarn/mappings.php');
 
 class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin 
 {   
