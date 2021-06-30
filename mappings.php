@@ -116,7 +116,7 @@ class Mappings
             return;
         // Initialise
         self::$intermediary_names = array();
-        self::$unknown_names = ['method_29713', 'method_29714', 'method_29715', 'method_29716', 'method_29717', 'method_29718', 'method_29713'];
+        self::$unknown_names = [];
         $intermediary = fopen(self::INTERMEDIARY, 'r');
         if ($intermediary)
         {
