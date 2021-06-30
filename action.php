@@ -7,6 +7,8 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
     {
         $controller->register_hook('PARSER_CACHE_USE', 'BEFORE', 
             $this, 'addCacheDependencies');
+        $controller->register_hook('RENDERER_CONTENT_POSTPROCESS', 'BEFORE', 
+            $this, 'write_missing');
     }
     
     public function addCacheDependencies(Doku_Event $event)
@@ -15,8 +17,15 @@ class action_plugin_map2fabricyarn extends DokuWiki_Action_Plugin
             'plugin map2fabricyarn')['used'])
         {
             array_push($event->data->depends['files'], 
-                Mappings::FILE);
+                Mappings::YARN, 
+                Mappings::INTERMEDIARY);
         }
+    }
+
+    public function write_missing(Doku_Event $event)
+    {
+        if ($event->data[0] == 'xhtml')
+            Mappings::write_missing($event->data[1]);
     }
 }
 ?>

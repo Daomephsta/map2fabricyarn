@@ -15,6 +15,8 @@ This tag can have [formatting](https://www.dokuwiki.org/wiki:syntax#basic_text_f
 ## Fully Qualified Class Names
 To output a fully qualified yarn class name, input a fully qualified intermediary name by prefixing it with `net.minecraft.`
 
-## Mapping File
-Mappings are loaded from `data\map2fabricyarn\mappings.tiny`. You must create and update this file yourself. 
-Pages using map2fabricyarn will automatically rebuild when the mappings file is updated.
+## Mapping Files
+`data\map2fabricyarn\yarn.tiny` must contain Tiny V2 format mappings from intermediary to named.
+`data\map2fabricyarn\intermediary.tiny` must contain Tiny V2 format mappings from any namespace to intermediary.  
+You must create and update these files yourself.  
+Pages using map2fabricyarn will automatically rebuild when any mappings file is updated.
